@@ -5,6 +5,9 @@ set(SOURCE_FILES
     mp4dump.cpp
     Application.h
     Application.cpp
+    DataView.h
+    StreamDownloader.h
+    StreamDownloader.cpp
 )
 
 find_library(CURL curl)

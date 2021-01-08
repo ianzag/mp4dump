@@ -1,5 +1,6 @@
 
 #include "Application.h"
+#include "StreamDownloader.h"
 
 #include <iostream>
 #include <string_view>
@@ -31,8 +32,16 @@ bool Application::parseCommandLine(int argc, char* argv[])
 
 bool Application::run()
 {
-    // XXX Run application
+    std::cout << "Start to fetch data stream from '" << m_url << "'" << std::endl;
 
+    // Download stream from remote site and parse it
+    StreamDownloader streamDownloader(m_url);
+    streamDownloader.downloadStream([](const DataView& buffer)
+    {
+        // XXX Parse received data stream
+    });
+
+    std::cout << "Finish to fetch data stream" << std::endl;
     return true;
 }
 
