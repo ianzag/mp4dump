@@ -1,3 +1,9 @@
+# Output dirs
+output/
+
+# IDE files
+CMakeLists.txt.user
+
 # Prerequisites
 *.d
 
