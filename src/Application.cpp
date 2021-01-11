@@ -1,11 +1,30 @@
 
 #include "Application.h"
 #include "StreamDownloader.h"
+#include "isobmf/BaseParserFactory.h"
+#include "isobmf/ContainerBoxParser.h"
 
 #include <iostream>
 #include <string_view>
 
 namespace mp4dump {
+
+class StreamParser final : public isobmf::ContainerBoxParser
+{
+public:
+    explicit StreamParser(const isobmf::ParserFactory& m_boxFactory)
+        : ContainerBoxParser(m_boxFactory) {}
+
+    void startParse() override
+    {
+        std::cout << "Stream {" << std::endl;
+    }
+
+    void endParse() override
+    {
+        std::cout << "}" << std::endl;
+    }
+};
 
 bool Application::parseCommandLine(int argc, char* argv[])
 {
@@ -36,10 +55,16 @@ bool Application::run()
 
     // Download stream from remote site and parse it
     StreamDownloader streamDownloader(m_url);
-    streamDownloader.downloadStream([](const DataView& buffer)
+    isobmf::BaseParserFactory parserFactory;
+    StreamParser streamParser(parserFactory);
+    streamParser.startParse();
+    streamDownloader.downloadStream([&](const DataView& buffer)
     {
-        // XXX Parse received data stream
+        for (const auto ch : buffer) {
+            streamParser.parseChar(ch);
+        }
     });
+    streamParser.endParse();
 
     std::cout << "Finish to fetch data stream" << std::endl;
     return true;
