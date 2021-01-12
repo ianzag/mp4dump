@@ -1,6 +1,6 @@
 
 #include "Application.h"
-#include "StreamDownloader.h"
+#include "DownloaderFactory.h"
 #include "isobmf/BaseParserFactory.h"
 #include "isobmf/ContainerBoxParser.h"
 
@@ -9,6 +9,9 @@
 
 namespace mp4dump {
 
+/**
+ * @brief Treat data stream as a box container
+ */
 class StreamParser final : public isobmf::ContainerBoxParser
 {
 public:
@@ -53,12 +56,15 @@ bool Application::run()
 {
     std::cout << "Start to fetch data stream from '" << m_url << "'" << std::endl;
 
-    // Download stream from remote site and parse it
-    StreamDownloader streamDownloader(m_url);
+    DownloaderFactory downloaderFactory;
+    auto streamDownloader = downloaderFactory.createDownloader(m_url);
+
     isobmf::BaseParserFactory parserFactory;
     StreamParser streamParser(parserFactory);
+
+    // Download stream from remote site and parse it
     streamParser.startParse();
-    streamDownloader.downloadStream([&](const DataView& buffer)
+    streamDownloader->downloadStream([&](const auto& buffer)
     {
         for (const auto ch : buffer) {
             streamParser.parseChar(ch);
