@@ -40,12 +40,17 @@ set(SOURCE_FILES
     isobmf/TrackFragmentRunBoxParser.cpp
     isobmf/UserExtensionBoxParser.h
     isobmf/UserExtensionBoxParser.cpp
+    isobmf/FileFormatDetector.h
+    isobmf/XmlDocumentParser.h
+    isobmf/XmlDocumentParser.cpp
 )
 
 find_library(CURL curl)
+find_library(EXPAT expat)
 
 set(LIBRARY_FILES
     ${CURL}
+    ${EXPAT}
 )
 
 add_executable(${APP_NAME} ${SOURCE_FILES})

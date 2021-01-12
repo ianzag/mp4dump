@@ -59,6 +59,7 @@ bool Application::run()
     DownloaderFactory downloaderFactory;
     auto streamDownloader = downloaderFactory.createDownloader(m_url);
 
+    // TODO: Detect which parser factory to use from file type (MP4, 3GP etc)
     isobmf::BaseParserFactory parserFactory;
     StreamParser streamParser(parserFactory);
 

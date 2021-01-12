@@ -3,6 +3,7 @@
 
 #include "IsoBmfTypes.h"
 
+#include <ostream>
 #include <memory>
 
 namespace isobmf {
@@ -55,6 +56,20 @@ public:
             BoxType boxType,
             BoxSize boxSize,
             const BoxParser* parentBox) const = 0;
+};
+
+/**
+ * @brief Interface to parse documents
+ */
+class DocumentParser
+{
+public:
+    virtual ~DocumentParser() = default;
+
+    virtual void startParse() = 0;
+    virtual bool parseChar(std::uint8_t ch) = 0;
+    virtual void endParse() = 0;
+    virtual std::ostream& printDetails(std::ostream& os) const = 0;
 };
 
 } // namespace
