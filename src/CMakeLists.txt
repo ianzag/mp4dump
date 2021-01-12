@@ -5,9 +5,13 @@ set(SOURCE_FILES
     main.cpp
     Application.h
     Application.cpp
-    DataView.h
     StreamDownloader.h
-    StreamDownloader.cpp
+    DownloaderFactory.h
+    DownloaderFactory.cpp
+    FileDownloader.h
+    FileDownloader.cpp
+    HttpDownloader.h
+    HttpDownloader.cpp
     isobmf/IsoBmfTypes.h
     isobmf/IsoBmfInterfaces.h
     isobmf/IsoBmfUtils.h

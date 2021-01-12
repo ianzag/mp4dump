@@ -1,5 +1,5 @@
 
-#include "StreamDownloader.h"
+#include "HttpDownloader.h"
 
 #include <algorithm>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 namespace mp4dump {
 
-StreamDownloader::StreamDownloader(const std::string& url)
+HttpDownloader::HttpDownloader(const std::string& url)
     : m_url{url}
     , m_curl{curl_easy_init()}
 {
@@ -17,14 +17,14 @@ StreamDownloader::StreamDownloader(const std::string& url)
     }
 }
 
-StreamDownloader::~StreamDownloader()
+HttpDownloader::~HttpDownloader()
 {
     if (m_curl) {
         curl_easy_cleanup(m_curl);
     }
 }
 
-void StreamDownloader::downloadStream(DataCallback dataCallback)
+void HttpDownloader::downloadStream(DataCallback dataCallback)
 {
     setOption(CURLOPT_URL, m_url);
     setOption(CURLOPT_HTTPGET, 1L);
@@ -49,7 +49,7 @@ void StreamDownloader::downloadStream(DataCallback dataCallback)
     }
 }
 
-bool StreamDownloader::handleWrite(const DataView& data)
+bool HttpDownloader::handleWrite(const DataView& data)
 {
     // Note: Handler may be executed in context of other thread!
     try {
@@ -65,18 +65,18 @@ bool StreamDownloader::handleWrite(const DataView& data)
     return false;
 }
 
-std::size_t StreamDownloader::cbWriteFunction(char* ptr, std::size_t size, std::size_t nmemb, void* data)
+std::size_t HttpDownloader::cbWriteFunction(char* ptr, std::size_t size, std::size_t nmemb, void* data)
 {
     if (ptr && data) {
         const auto totalSize = nmemb * size;
-        if (static_cast<StreamDownloader*>(data)->handleWrite(DataView(ptr, totalSize))) {
+        if (static_cast<HttpDownloader*>(data)->handleWrite(DataView(reinterpret_cast<std::uint8_t*>(ptr), totalSize))) {
             return totalSize;
         }
     }
     return 0;
 }
 
-void StreamDownloader::setOption(CURLoption option, long value)
+void HttpDownloader::setOption(CURLoption option, long value)
 {
     const auto error = curl_easy_setopt(m_curl, option, value);
     if (error != CURLE_OK) {
@@ -86,7 +86,7 @@ void StreamDownloader::setOption(CURLoption option, long value)
     }
 }
 
-void StreamDownloader::setOption(CURLoption option, void* value)
+void HttpDownloader::setOption(CURLoption option, void* value)
 {
     const auto error = curl_easy_setopt(m_curl, option, value);
     if (error != CURLE_OK) {
@@ -96,7 +96,7 @@ void StreamDownloader::setOption(CURLoption option, void* value)
     }
 }
 
-void StreamDownloader::setOption(CURLoption option, const std::string& value)
+void HttpDownloader::setOption(CURLoption option, const std::string& value)
 {
     // As CURL docs says:
     // ===========
@@ -121,7 +121,7 @@ void StreamDownloader::setOption(CURLoption option, const std::string& value)
     }
 }
 
-const char* StreamDownloader::getErrorMessage() const
+const char* HttpDownloader::getErrorMessage() const
 {
     // Search for non-empty zero terminated string
     const auto it = std::find_if(m_errorBuffer.begin(), m_errorBuffer.end(), [](char ch){ return ch == '\0';});
