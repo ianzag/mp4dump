@@ -7,16 +7,16 @@ void MovieFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {
     case State::Reserved:
-        if (putChar(ch) == 4) {
+        if (m_parser.putChar(ch) == 4) {
             m_state = State::SequenceNumber;
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::SequenceNumber:
-        if (putChar(ch) == 4) {
-            m_sequenceNumber = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_sequenceNumber = m_parser.getAs<std::uint32_t>();
             m_state = State::Done;
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::Done:

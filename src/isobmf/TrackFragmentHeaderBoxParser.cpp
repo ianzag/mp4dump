@@ -7,15 +7,15 @@ void TrackFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {
     case State::TfFlags:
-        if (putChar(ch) == 4) {
-            m_tfFlags = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_tfFlags = m_parser.getAs<std::uint32_t>();
             m_state = State::TrackId;
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::TrackId:
-        if (putChar(ch) == 4) {
-            m_trackId = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_trackId = m_parser.getAs<std::uint32_t>();
             if (m_tfFlags & TfFlag_BaseDataOffset) {
                 m_state = State::BaseDataOffset;
             } else if (m_tfFlags & TfFlag_SampleDescriptionIndex) {
@@ -29,12 +29,12 @@ void TrackFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
             } else {
                 m_state = State::Done;
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::BaseDataOffset:
-        if (putChar(ch) == 8) {
-            m_baseDataOffset = getAs<std::uint64_t>();
+        if (m_parser.putChar(ch) == 8) {
+            m_baseDataOffset = m_parser.getAs<std::uint64_t>();
             if (m_tfFlags & TfFlag_SampleDescriptionIndex) {
                 m_state = State::SampleDescriptionIndex;
             } else if (m_tfFlags & TfFlag_DefaultSampleDuration) {
@@ -46,12 +46,12 @@ void TrackFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
             } else {
                 m_state = State::Done;
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::SampleDescriptionIndex:
-        if (putChar(ch) == 4) {
-            m_sampleDescriptionIndex = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_sampleDescriptionIndex = m_parser.getAs<std::uint32_t>();
             if (m_tfFlags & TfFlag_DefaultSampleDuration) {
                 m_state = State::DefaultSampleDuration;
             } else if (m_tfFlags & TfFlag_DefaultSampleSize) {
@@ -61,12 +61,12 @@ void TrackFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
             } else {
                 m_state = State::Done;
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::DefaultSampleDuration:
-        if (putChar(ch) == 4) {
-            m_defaultSampleDuration = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_defaultSampleDuration = m_parser.getAs<std::uint32_t>();
             if (m_tfFlags & TfFlag_DefaultSampleSize) {
                 m_state = State::DefaultSampleSize;
             } else if (m_tfFlags & TfFlag_DefaultSampleFlags) {
@@ -74,24 +74,25 @@ void TrackFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
             } else {
                 m_state = State::Done;
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::DefaultSampleSize:
-        if (putChar(ch) == 4) {
-            m_defaultSampleSize = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_defaultSampleSize = m_parser.getAs<std::uint32_t>();
             if (m_tfFlags & TfFlag_DefaultSampleFlags) {
                 m_state = State::DefaultSampleFlags;
             } else {
                 m_state = State::Done;
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::DefaultSampleFlags:
-        if (putChar(ch) == 4) {
-            m_defaultSampleFlags = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_defaultSampleFlags = m_parser.getAs<std::uint32_t>();
             m_state = State::Done;
+            m_parser.reset();
         }
         break;
     case State::Done:

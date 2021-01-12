@@ -11,6 +11,7 @@ set(SOURCE_FILES
     isobmf/IsoBmfTypes.h
     isobmf/IsoBmfInterfaces.h
     isobmf/IsoBmfUtils.h
+    isobmf/BinaryParser.h
     isobmf/BaseParserFactory.h
     isobmf/BaseParserFactory.cpp
     isobmf/BaseBoxParser.h

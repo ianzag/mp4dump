@@ -3,9 +3,7 @@
 
 #include "IsoBmfInterfaces.h"
 
-#include <array>
 #include <iostream>
-#include <stdexcept>
 #include <string>
 
 namespace isobmf {
@@ -53,37 +51,6 @@ public:
             os << "  ";
         }
         return os;
-    }
-
-protected:
-    // Temporary parse buffer
-    std::array<std::uint8_t, 64> m_buf;
-    std::size_t m_pos = 0;
-
-    /**
-     * @brief Append character to buffer and return new buffer length
-     * @param ch Char to append
-     * @return Buffer length
-     */
-    std::size_t putChar(std::uint8_t ch)
-    {
-        if (m_pos >= m_buf.size()) {
-            throw std::out_of_range("Box parser buffer overflow");
-        }
-        m_buf[m_pos++] = ch;
-        return m_pos;
-    }
-
-    template <class T>
-    T getAs() const noexcept
-    {
-        T result = 0;
-        std::size_t shift = (sizeof(T) - 1) * 8;
-        for (std::size_t i = 0; i < sizeof(T); i++) {
-            result |= static_cast<T>(m_buf[i]) << shift;
-            shift -= 8;
-        }
-        return result;
     }
 
 private:
