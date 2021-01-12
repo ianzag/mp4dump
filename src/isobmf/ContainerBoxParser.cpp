@@ -25,8 +25,8 @@ void ContainerBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {
     case State::CompactSize:
-        if (putChar(ch) == 4) {
-            m_childBoxSize = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            m_childBoxSize = m_parser.getAs<std::uint32_t>();
             if (m_childBoxSize == 1) { // Large size is following
                 m_state = State::ExtendedSize;
             } else if (m_childBoxSize == 0) {
@@ -40,12 +40,12 @@ void ContainerBoxParser::parseChar(std::uint8_t ch)
                 os << "Failed to parse box (Invalid box size " << m_childBoxSize << ")";
                 throw std::runtime_error(os.str());
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::ExtendedSize:
-        if (putChar(ch) == 8) {
-            m_childBoxSize = getAs<std::uint64_t>();
+        if (m_parser.putChar(ch) == 8) {
+            m_childBoxSize = m_parser.getAs<std::uint64_t>();
             if (m_childBoxSize == 0) {
                 m_state = State::Type;
                 m_dataLeft = 0; // Data spans till the end of file
@@ -57,12 +57,12 @@ void ContainerBoxParser::parseChar(std::uint8_t ch)
                 os << "Failed to parse box (Invalid box size " << m_childBoxSize << ")";
                 throw std::runtime_error(os.str());
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::Type:
-        if (putChar(ch) == 4) {
-            const auto boxType = getAs<std::uint32_t>();
+        if (m_parser.putChar(ch) == 4) {
+            const auto boxType = m_parser.getAs<std::uint32_t>();
             m_childBoxParser = m_boxFactory.createParser(boxType, m_childBoxSize, this);
             if (!m_childBoxParser) {
                 m_childBoxParser = m_boxFactory.createUnknownParser(boxType, m_childBoxSize, this);
@@ -75,7 +75,7 @@ void ContainerBoxParser::parseChar(std::uint8_t ch)
                 m_childBoxParser.reset();
                 m_state = State::CompactSize;
             }
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::Data:
@@ -87,7 +87,7 @@ void ContainerBoxParser::parseChar(std::uint8_t ch)
             m_childBoxParser->endParse();
             m_childBoxParser.reset();
             m_state = State::CompactSize;
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     }

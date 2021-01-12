@@ -10,11 +10,11 @@ void UserExtensionBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {
     case State::UUID:
-        if (putChar(ch) == 16) {
-            std::copy(m_buf.begin(), m_buf.end(), m_uuid.begin());
-            // TODO: Create a extended user box parser for known UUIDs
+        if (m_parser.putChar(ch) == 16) {
+            std::copy(m_parser.begin(), m_parser.end(), m_uuid.begin());
+            // TODO: Create an extended user data parser for known UUIDs
             m_state = State::Data;
-            m_pos = 0;
+            m_parser.reset();
         }
         break;
     case State::Data:
