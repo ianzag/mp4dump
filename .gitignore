@@ -1,4 +1,5 @@
 # Output dirs
+build/
 output/
 
 # IDE files
