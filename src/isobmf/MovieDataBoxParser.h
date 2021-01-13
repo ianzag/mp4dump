@@ -38,8 +38,9 @@ private:
     enum class State
     {
         DetectFormat,
+        UnknownFormat,
         ParseDocument,
-        Done,
+        ParseError,
     };
 
     State m_state = State::DetectFormat;

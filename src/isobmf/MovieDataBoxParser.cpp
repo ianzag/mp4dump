@@ -15,26 +15,28 @@ void MovieDataBoxParser::parseChar(std::uint8_t ch)
         case FileFormat::InProgress:
             break;
         case FileFormat::Unknown:
-            m_state = State::Done;
+            m_state = State::ParseError;
             break;
         case FileFormat::XML:
             m_documentParser = std::make_unique<XmlDocumentParser>();
             m_documentParser->startParse();
             for (const auto ch : m_buffer) {
-                m_documentParser->parseChar(ch);
+                if (!m_documentParser->parseChar(ch)) {
+                    m_state = State::ParseError;
+                    break;
+                }
             }
             m_state = State::ParseDocument;
             break;
         }
         break;
     case State::ParseDocument:
-        if (m_documentParser) {
-            if (!m_documentParser->parseChar(ch)) {
-                m_state = State::Done;
-            }
+        if (m_documentParser && !m_documentParser->parseChar(ch)) {
+            m_state = State::ParseError;
         }
         break;
-    case State::Done:
+    case State::UnknownFormat:
+    case State::ParseError:
         break;
     }
 }
@@ -51,8 +53,21 @@ void MovieDataBoxParser::endParse()
 std::ostream& MovieDataBoxParser::printDetails(std::ostream& os) const
 {
     // Print document specific details
-    if (m_documentParser) {
-        m_documentParser->printDetails(os);
+    if (m_documentParser && m_state == State::ParseDocument) {
+        switch (m_state) {
+        case State::DetectFormat:
+            os << "error: Insufficient data to detect document format";
+            break;
+        case State::UnknownFormat:
+            os << "error: Unknown document format";
+            break;
+        case State::ParseDocument:
+            m_documentParser->printDetails(os);
+            break;
+        case State::ParseError:
+            os << "error: Failed to parse document";
+            break;
+        }
     }
     return os;
 }
