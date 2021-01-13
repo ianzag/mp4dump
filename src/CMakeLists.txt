@@ -12,6 +12,9 @@ set(SOURCE_FILES
     FileDownloader.cpp
     HttpDownloader.h
     HttpDownloader.cpp
+    utils/Base64.h
+    utils/Base64.cpp
+    utils/StringConvert.h
     isobmf/IsoBmfTypes.h
     isobmf/IsoBmfInterfaces.h
     isobmf/IsoBmfUtils.h

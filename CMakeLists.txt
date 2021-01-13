@@ -12,4 +12,5 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Werror")
 endif()
 
+include_directories("${PROJECT_SOURCE_DIR}/src")
 add_subdirectory(src)

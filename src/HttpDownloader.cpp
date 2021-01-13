@@ -29,6 +29,8 @@ void HttpDownloader::downloadStream(DataCallback dataCallback)
     setOption(CURLOPT_URL, m_url);
     setOption(CURLOPT_HTTPGET, 1L);
     setOption(CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+    setOption(CURLOPT_FOLLOWLOCATION, 1L);
+    setOption(CURLOPT_MAXREDIRS, 5); // TODO: Make it configureable
     setOption(CURLOPT_FAILONERROR, 1L);
     setOption(CURLOPT_ERRORBUFFER, m_errorBuffer.data());
     setOption(CURLOPT_WRITEDATA, this);

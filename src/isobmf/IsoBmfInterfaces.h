@@ -68,7 +68,7 @@ public:
 
     virtual void startParse() = 0;
     virtual bool parseChar(std::uint8_t ch) = 0;
-    virtual void endParse() = 0;
+    virtual bool endParse() = 0;
     virtual std::ostream& printDetails(std::ostream& os) const = 0;
 };
 
