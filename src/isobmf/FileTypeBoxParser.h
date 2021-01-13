@@ -2,7 +2,7 @@
 #pragma once
 
 #include "FullBoxParser.h"
-#include "BinaryParser.h"
+#include "utils/BinaryParser.h"
 
 #include <vector>
 
@@ -41,7 +41,7 @@ private:
         CompatibleBrands,
     };
 
-    BinaryParser<4> m_parser;
+    utils::BinaryParser<4> m_parser;
     State m_state = State::MajorBrand;
     std::uint32_t m_majorBrand = 0;
     std::uint32_t m_minorVersion = 0;

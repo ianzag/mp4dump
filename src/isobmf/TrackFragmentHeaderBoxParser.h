@@ -2,7 +2,7 @@
 #pragma once
 
 #include "FullBoxParser.h"
-#include "BinaryParser.h"
+#include "utils/BinaryParser.h"
 
 #include <optional>
 
@@ -58,7 +58,7 @@ private:
         TfFlag_DefaultSampleFlags       = (1 << 5),
     };
 
-    BinaryParser<8> m_parser;
+    utils::BinaryParser<8> m_parser;
     State m_state = State::TfFlags;
     std::uint32_t m_tfFlags = 0;
     std::uint32_t m_trackId = 0;

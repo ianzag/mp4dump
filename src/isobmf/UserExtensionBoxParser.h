@@ -2,7 +2,7 @@
 #pragma once
 
 #include "FullBoxParser.h"
-#include "BinaryParser.h"
+#include "utils/BinaryParser.h"
 
 namespace isobmf {
 
@@ -22,7 +22,7 @@ private:
         Data,
     };
 
-    BinaryParser<16> m_parser;
+    utils::BinaryParser<16> m_parser;
     State m_state = State::UUID;
     std::array<std::uint8_t, 16> m_uuid;
     std::size_t m_dataSize = 0;
