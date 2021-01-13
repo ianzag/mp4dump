@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-namespace isobmf {
+namespace utils {
 
 template <std::size_t MaxSize>
 class BinaryParser

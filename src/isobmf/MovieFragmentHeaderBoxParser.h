@@ -2,7 +2,7 @@
 #pragma once
 
 #include "FullBoxParser.h"
-#include "BinaryParser.h"
+#include "utils/BinaryParser.h"
 
 namespace isobmf {
 
@@ -36,7 +36,7 @@ private:
         Done,
     };
 
-    BinaryParser<4> m_parser;
+    utils::BinaryParser<4> m_parser;
     State m_state = State::Reserved;
     std::uint32_t m_sequenceNumber = 0;
 };

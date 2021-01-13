@@ -2,7 +2,7 @@
 #pragma once
 
 #include "BaseBoxParser.h"
-#include "BinaryParser.h"
+#include "utils/BinaryParser.h"
 
 #include <memory>
 
@@ -55,7 +55,7 @@ private:
 
     const ParserFactory& m_boxFactory;
 
-    BinaryParser<8> m_parser;
+    utils::BinaryParser<8> m_parser;
     State m_state = State::CompactSize;
     BoxSize m_childBoxSize;
     std::unique_ptr<BoxParser> m_childBoxParser;
