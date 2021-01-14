@@ -56,17 +56,20 @@ bool Application::run()
 {
     std::cout << "Start to fetch data stream from '" << m_url << "'" << std::endl;
 
+    // Create stream downloader instance
     DownloaderFactory downloaderFactory;
     auto streamDownloader = downloaderFactory.createDownloader(m_url);
 
+    // Create stream parser
     // TODO: Detect which parser factory to use from file type (MP4, 3GP etc)
     isobmf::BaseParserFactory parserFactory;
     StreamParser streamParser(parserFactory);
 
-    // Download stream from remote site and parse it
+    // Download stream, parse and print it
     streamParser.startParse();
     streamDownloader->downloadStream([&](const auto& buffer)
     {
+        // Feed pieces of stream to the parser
         for (const auto ch : buffer) {
             streamParser.parseChar(ch);
         }

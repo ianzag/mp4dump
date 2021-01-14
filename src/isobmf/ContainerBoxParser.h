@@ -10,6 +10,10 @@ namespace isobmf {
 
 /**
  * @brief Parse Container Box
+ *
+ * Treat input stream as a container box. Search for child boxes.
+ * For each found child create a parser depending on its type and feed data to it.
+ *
 
 4.2 Object Structure
 aligned(8) class Box (unsigned int(32) boxtype, optional unsigned int(8)[16] extended_type) {
