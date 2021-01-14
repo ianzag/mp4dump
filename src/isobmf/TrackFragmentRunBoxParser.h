@@ -66,7 +66,7 @@ private:
         TrFlag_FirstSampleFlags = (1 << 2),
     };
 
-    State                       m_state = State::TrFlags;
+    State                       m_state;
     utils::BinaryParser<4>      m_parser;
     TrFlags                     m_trFlags;
     SampleCount                 m_sampleCount;
