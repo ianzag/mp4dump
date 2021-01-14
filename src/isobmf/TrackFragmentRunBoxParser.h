@@ -55,6 +55,12 @@ private:
         Done,
     };
 
+    void switchState(State newState) noexcept
+    {
+        m_state = newState;
+        m_parser.reset();
+    }
+
     using TrFlags          = std::uint32_t;
     using SampleCount      = std::uint32_t;
     using DataOffset       = std::int32_t;
