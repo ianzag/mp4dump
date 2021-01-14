@@ -30,10 +30,14 @@ public:
     FileTypeBoxParser(BoxSize boxSize, const BoxParser* parentBox)
         : FullBoxParser("File Type", boxSize, parentBox) {}
 
+    void startParse() override;
     void parseChar(std::uint8_t ch) override;
     std::ostream& printDetails(std::ostream& os) const override;
 
 private:
+    using BrandNumber   = std::uint32_t;
+    using VersionNumber = std::uint32_t;
+
     enum class State
     {
         MajorBrand,
@@ -41,11 +45,17 @@ private:
         CompatibleBrands,
     };
 
+    void switchState(State newState) noexcept
+    {
+        m_state = newState;
+        m_parser.reset();
+    }
+
     utils::BinaryParser<4> m_parser;
-    State m_state = State::MajorBrand;
-    std::uint32_t m_majorBrand = 0;
-    std::uint32_t m_minorVersion = 0;
-    std::vector<std::uint32_t> m_compatibleBrands;
+    State m_state;
+    BrandNumber m_majorBrand = 0;
+    VersionNumber m_minorVersion = 0;
+    std::vector<BrandNumber> m_compatibleBrands;
 };
 
 } // namespace

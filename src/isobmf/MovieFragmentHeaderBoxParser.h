@@ -25,20 +25,30 @@ public:
     MovieFragmentHeaderBoxParser(BoxSize boxSize, const BoxParser* parentBox)
         : FullBoxParser("Movie Fragment Header", boxSize, parentBox) {}
 
+    void startParse() override;
     void parseChar(std::uint8_t ch) override;
     std::ostream& printDetails(std::ostream& os) const override;
 
 private:
+    using ReservedField  = std::uint32_t;
+    using SequenceNumber = std::uint32_t;
+
     enum class State
     {
-        Reserved,
+        ReservedField,
         SequenceNumber,
         Done,
     };
 
+    void switchState(State newState) noexcept
+    {
+        m_state = newState;
+        m_parser.reset();
+    }
+
     utils::BinaryParser<4> m_parser;
-    State m_state = State::Reserved;
-    std::uint32_t m_sequenceNumber = 0;
+    State m_state = State::ReservedField;
+    SequenceNumber m_sequenceNumber = 0;
 };
 
 } // namespace

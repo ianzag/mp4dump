@@ -4,6 +4,12 @@
 
 namespace isobmf {
 
+void MovieDataBoxParser::startParse()
+{
+    m_state = State::DetectFormat;
+    m_formatDetector.reset();
+}
+
 void MovieDataBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {

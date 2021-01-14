@@ -30,6 +30,7 @@ public:
     MovieDataBoxParser(BoxSize boxSize, const BoxParser* parentBox)
         : FullBoxParser("Movie Data", boxSize, parentBox) {}
 
+    void startParse() override;
     void parseChar(std::uint8_t ch) override;
     void endParse() override;
     std::ostream& printDetails(std::ostream& os) const override;

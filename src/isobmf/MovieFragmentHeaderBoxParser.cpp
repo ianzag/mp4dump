@@ -3,20 +3,23 @@
 
 namespace isobmf {
 
+void MovieFragmentHeaderBoxParser::startParse()
+{
+    switchState(State::ReservedField);
+}
+
 void MovieFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {
-    case State::Reserved:
-        if (m_parser.putChar(ch) == 4) {
-            m_state = State::SequenceNumber;
-            m_parser.reset();
+    case State::ReservedField:
+        if (m_parser.putChar(ch) == sizeof(ReservedField)) {
+            switchState(State::SequenceNumber);
         }
         break;
     case State::SequenceNumber:
-        if (m_parser.putChar(ch) == 4) {
-            m_sequenceNumber = m_parser.getAs<std::uint32_t>();
-            m_state = State::Done;
-            m_parser.reset();
+        if (m_parser.putChar(ch) == sizeof(SequenceNumber)) {
+            m_sequenceNumber = m_parser.getAs<SequenceNumber>();
+            switchState(State::Done);
         }
         break;
     case State::Done:
@@ -26,7 +29,11 @@ void MovieFragmentHeaderBoxParser::parseChar(std::uint8_t ch)
 
 std::ostream& MovieFragmentHeaderBoxParser::printDetails(std::ostream& os) const
 {
-    os << "sequenceNumber: " << std::dec << m_sequenceNumber;
+    if (m_state != State::Done) {
+        os << "parseError: Incompleted data";
+    } else {
+        os << "sequenceNumber: " << std::dec << m_sequenceNumber;
+    }
     return os;
 }
 

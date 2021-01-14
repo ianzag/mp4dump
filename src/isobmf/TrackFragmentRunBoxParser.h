@@ -55,6 +55,12 @@ private:
         Done,
     };
 
+    void switchState(State newState) noexcept
+    {
+        m_state = newState;
+        m_parser.reset();
+    }
+
     using TrFlags          = std::uint32_t;
     using SampleCount      = std::uint32_t;
     using DataOffset       = std::int32_t;
@@ -66,7 +72,7 @@ private:
         TrFlag_FirstSampleFlags = (1 << 2),
     };
 
-    State                       m_state = State::TrFlags;
+    State                       m_state;
     utils::BinaryParser<4>      m_parser;
     TrFlags                     m_trFlags;
     SampleCount                 m_sampleCount;

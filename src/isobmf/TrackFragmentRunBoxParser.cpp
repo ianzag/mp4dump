@@ -5,8 +5,7 @@ namespace isobmf {
 
 void TrackFragmentRunBoxParser::startParse()
 {
-    m_state = State::TrFlags;
-    m_parser.reset();
+    switchState(State::TrFlags);
 }
 
 void TrackFragmentRunBoxParser::parseChar(std::uint8_t ch)
@@ -15,42 +14,38 @@ void TrackFragmentRunBoxParser::parseChar(std::uint8_t ch)
     case State::TrFlags:
         if (m_parser.putChar(ch) == sizeof(TrFlags)) {
             m_trFlags = m_parser.getAs<TrFlags>();
-            m_state = State::SampleCount;
-            m_parser.reset();
+            switchState(State::SampleCount);
         }
         break;
     case State::SampleCount:
         if (m_parser.putChar(ch) == sizeof(SampleCount)) {
             m_sampleCount = m_parser.getAs<SampleCount>();
             if (m_trFlags & TrFlag_DataOffset) {
-                m_state = State::DataOffset;
+                switchState(State::DataOffset);
             } else if (m_trFlags & TrFlag_FirstSampleFlags) {
-                m_state = State::FirstSampleFlags;
+                switchState(State::FirstSampleFlags);
             } else {
                 // TODO: Parse array of samples
-                m_state = State::Done;
+                switchState(State::Done);
             }
-            m_parser.reset();
         }
         break;
     case State::DataOffset:
         if (m_parser.putChar(ch) == sizeof(DataOffset)) {
             m_dataOffset = m_parser.getAs<DataOffset>();
             if (m_trFlags & TrFlag_FirstSampleFlags) {
-                m_state = State::FirstSampleFlags;
+                switchState(State::FirstSampleFlags);
             } else {
                 // TODO: Parse array of samples
-                m_state = State::Done;
+                switchState(State::Done);
             }
-            m_parser.reset();
         }
         break;
     case State::FirstSampleFlags:
         if (m_parser.putChar(ch) == sizeof(FirstSampleFlags)) {
             m_firstSampleFlags = m_parser.getAs<FirstSampleFlags>();
             // TODO: Parse array of samples
-            m_state = State::Done;
-            m_parser.reset();
+            switchState(State::Done);
         }
         break;
     case State::Done:

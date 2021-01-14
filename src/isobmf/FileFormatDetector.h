@@ -34,6 +34,11 @@ public:
         return m_pos < m_buf.size() ? FileFormat::InProgress : FileFormat::Unknown;
     }
 
+    void reset() noexcept
+    {
+        m_pos = 0;
+    }
+
 private:
     std::array<char, MaxSize> m_buf;
     std::size_t m_pos = 0;

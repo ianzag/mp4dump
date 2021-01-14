@@ -33,6 +33,7 @@ public:
     TrackFragmentHeaderBoxParser(BoxSize boxSize, const BoxParser* parentBox)
         : FullBoxParser("Track Fragment Header", boxSize, parentBox) {}
 
+    void startParse() override;
     void parseChar(std::uint8_t ch) override;
     std::ostream& printDetails(std::ostream& os) const override;
 
@@ -49,7 +50,21 @@ private:
         Done,
     };
 
-    enum : std::uint32_t
+    void switchState(State newState) noexcept
+    {
+        m_state = newState;
+        m_parser.reset();
+    }
+
+    using TfFlags                   = std::uint32_t;
+    using TrackId                   = std::uint32_t;
+    using BaseDataOffset            = std::uint64_t;
+    using SampleDescriptionIndex    = std::uint32_t;
+    using DefaultSampleDuration     = std::uint32_t;
+    using DefaultSampleSize         = std::uint32_t;
+    using DefaultSampleFlags        = std::uint32_t;
+
+    enum : TfFlags
     {
         TfFlag_BaseDataOffset           = (1 << 0),
         TfFlag_SampleDescriptionIndex   = (1 << 1),
@@ -59,14 +74,14 @@ private:
     };
 
     utils::BinaryParser<8> m_parser;
-    State m_state = State::TfFlags;
-    std::uint32_t m_tfFlags = 0;
-    std::uint32_t m_trackId = 0;
-    std::optional<std::uint64_t> m_baseDataOffset;
-    std::optional<std::uint32_t> m_sampleDescriptionIndex;
-    std::optional<std::uint32_t> m_defaultSampleDuration;
-    std::optional<std::uint32_t> m_defaultSampleSize;
-    std::optional<std::uint32_t> m_defaultSampleFlags;
+    State m_state;
+    TfFlags                                 m_tfFlags;
+    TrackId                                 m_trackId;
+    std::optional<BaseDataOffset>           m_baseDataOffset;
+    std::optional<SampleDescriptionIndex>   m_sampleDescriptionIndex;
+    std::optional<DefaultSampleDuration>    m_defaultSampleDuration;
+    std::optional<DefaultSampleSize>        m_defaultSampleSize;
+    std::optional<DefaultSampleFlags>       m_defaultSampleFlags;
 };
 
 } // namespace
