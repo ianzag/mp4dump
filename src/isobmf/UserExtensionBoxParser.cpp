@@ -6,6 +6,12 @@
 
 namespace isobmf {
 
+void UserExtensionBoxParser::startParse()
+{
+    switchState(State::UUID);
+    m_dataSize = 0;
+}
+
 void UserExtensionBoxParser::parseChar(std::uint8_t ch)
 {
     switch (m_state) {
@@ -13,8 +19,7 @@ void UserExtensionBoxParser::parseChar(std::uint8_t ch)
         if (m_parser.putChar(ch) == 16) {
             std::copy(m_parser.begin(), m_parser.end(), m_uuid.begin());
             // TODO: Create an extended user data parser for known UUIDs
-            m_state = State::Data;
-            m_parser.reset();
+            switchState(State::Data);
         }
         break;
     case State::Data:
