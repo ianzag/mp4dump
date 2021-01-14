@@ -45,18 +45,27 @@ public:
     void endParse() override;
 
 private:
+    using CompactSize  = std::uint32_t;
+    using ExtendedSize = std::uint64_t;
+
     enum class State
     {
         CompactSize,    ///< Box compact size (normal)
         ExtendedSize,   ///< Box extended size (optional)
-        Type,           ///< Box type
-        Data,           ///< Box body
+        BoxType,        ///< Box type
+        BoxData,        ///< Box body
     };
+
+    void switchState(State newState) noexcept
+    {
+        m_state = newState;
+        m_parser.reset();
+    }
 
     const ParserFactory& m_boxFactory;
 
     utils::BinaryParser<8> m_parser;
-    State m_state = State::CompactSize;
+    State m_state;
     BoxSize m_childBoxSize;
     std::unique_ptr<BoxParser> m_childBoxParser;
     BoxSize m_dataLeft;
