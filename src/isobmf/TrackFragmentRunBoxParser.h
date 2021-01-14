@@ -2,6 +2,9 @@
 #pragma once
 
 #include "FullBoxParser.h"
+#include "utils/BinaryParser.h"
+
+#include <optional>
 
 namespace isobmf {
 
@@ -38,9 +41,37 @@ public:
     TrackFragmentRunBoxParser(BoxSize boxSize, const BoxParser* parentBox)
         : FullBoxParser("Track Fragment Run", boxSize, parentBox) {}
 
-    // TODO: Add box parser
+    void startParse() override;
+    void parseChar(std::uint8_t ch) override;
+    std::ostream& printDetails(std::ostream& os) const override;
 
 private:
+    enum class State
+    {
+        TrFlags,
+        SampleCount,
+        DataOffset,
+        FirstSampleFlags,
+        Done,
+    };
+
+    using TrFlags          = std::uint32_t;
+    using SampleCount      = std::uint32_t;
+    using DataOffset       = std::int32_t;
+    using FirstSampleFlags = std::uint32_t;
+
+    enum : TrFlags
+    {
+        TrFlag_DataOffset       = (1 << 0),
+        TrFlag_FirstSampleFlags = (1 << 2),
+    };
+
+    State                       m_state = State::TrFlags;
+    utils::BinaryParser<4>      m_parser;
+    TrFlags                     m_trFlags;
+    SampleCount                 m_sampleCount;
+    std::optional<DataOffset>   m_dataOffset;
+    std::optional<FirstSampleFlags> m_firstSampleFlags;
 };
 
 } // namespace
