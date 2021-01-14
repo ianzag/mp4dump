@@ -39,6 +39,8 @@ Stream {
 
 1. Add more parsers for different types of boxes
 2. Handle large files (especially remote)
+3. Add scripts to build on MS Windows platform
+4. Setup GitHib CI/CD (why not?)
 
 Current implementation downloads remote file completely and parses it. While this approach makes parser neat and simple, it is impractical for large files. For example a real MP4 media file with some movie inside can be very large (gigabytes). On the other hand, the vast majority of this file is used by media data. Structural elements require relatively little space. For local files parser can be easily rewritten from stream to random access. For remote files accessible over HTTP trick with **HTTP byte-range** reading. In this case we can simulate a random access to remote file and *greatly* speedup file processing. No need to download it completely anymore.
 
